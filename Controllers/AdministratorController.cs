@@ -20,15 +20,13 @@ namespace api_para_banco.Controllers
     {
         readonly string _strDeConexao;
 
-        model.ModeloBusca molde = new model.ModeloBusca();
         public AdministratorController(model.ClasseCon strDeCon)
         {
             _strDeConexao = strDeCon.strDeConexao;
         }
         [HttpGet("pessoasNaCaixinha")]
         public IActionResult PessoasComCaixinha([FromQuery]Filtro? filtro, decimal? valor)
-        {
-            int tamanho = 0;
+        { 
             string query = "";
             switch (filtro.tipo) 
             {
@@ -53,10 +51,10 @@ namespace api_para_banco.Controllers
                     SqlCommand cmd = new SqlCommand(query, con);
                     if (filtro.tipo != null) 
                     {
-                    var param = cmd.Parameters.Add("@valor", SqlDbType.Decimal,15);
-                    param.Precision = 15;   
-                    param.Scale = 2;
-                    param.Value =valor;
+                        var param = cmd.Parameters.Add("@valor", SqlDbType.Decimal,15);
+                        param.Precision = 15;   
+                        param.Scale = 2;
+                        param.Value =valor;
                     }
                     SqlDataReader reader = cmd.ExecuteReader();
                     while (reader.Read()) 
@@ -109,56 +107,3 @@ namespace api_para_banco.Controllers
         }
     }
 }
-//pouco eficiente mas tem o linq ent vou deixar salvo
-//public IActionResult PessoasComCaixinha([FromQuery] Filtro? filtro, string? valorOuIdentificacao)
-//{
-//    int tamanho = 0;
-//    string querry = "";
-
-//    List<ModeloBusca> pessoas = new List<ModeloBusca>();
-//    try
-//    {
-//        using (SqlConnection con = new SqlConnection(_strDeConexao))
-//        {
-//            querry = "SELECT * FROM ContaPoupanca AS N JOIN ContaCorrente ON Investidor = Titular AND N.Saldo > 0";
-//            con.Open();
-
-//            SqlCommand cmd = new SqlCommand(querry, con);
-//            SqlDataReader reader = cmd.ExecuteReader();
-//            while (reader.Read())
-//            {
-//                var item = new ModeloBusca
-//                {
-//                    titular = reader["Investidor"].ToString(),
-
-//                    saldo = reader["Saldo"].ToString(),
-
-//                    cpf = reader["cpf"].ToString(),
-
-//                    id = Convert.ToInt32(reader["id"])
-
-//                };
-//                pessoas.Add(item);
-//            }
-//            switch (filtro.tipo)
-//            {
-//                case TipoFiltro.valorMinimo:
-//                    pessoas = pessoas.Where(x => Convert.ToDecimal(x.saldo) >= Convert.ToDecimal(valorOuIdentificacao)).ToList();
-//                    break;
-//                case TipoFiltro.valorMaximo:
-//                    pessoas = pessoas.Where(x => Convert.ToDecimal(x.saldo) <= Convert.ToDecimal(valorOuIdentificacao)).ToList();
-//                    break;
-//                case TipoFiltro.cpf:
-//                    pessoas = pessoas.Where(x => x.cpf == valorOuIdentificacao).ToList();
-//                    break;
-//            }
-
-
-//            return Ok(pessoas);
-//        }
-//    }
-//    catch (Exception ex)
-//    {
-//        return BadRequest(new List<string> { ex.Message });
-//    }
-//}
