@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Data.SqlClient;
+using api_para_banco.Services;
 using api_para_banco.model;
 using Microsoft.Data.SqlClient;
 using System.Data;
+using Asp.Versioning;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -14,16 +16,21 @@ namespace api_para_banco.Controllers
     [ApiController]
     public class ClienteController : ControllerBase
     {
+
         readonly string _strDeConexao;
-        public ClienteController(ClasseCon strDeCon)
+        readonly EntityFrameWorkModel _Context;
+        Utilidade _utilidade;
+        public ClienteController(ClasseCon strDeCon, EntityFrameWorkModel context)
         {
+            _Context = context;
+            _utilidade = new Utilidade(context);
             _strDeConexao = strDeCon.strDeConexao;
 
         }
 
         public string Saldo { get; private set; }
-
-        [HttpGet("ver_saldo")]
+        [ApiVersion(1.0)]
+        [HttpGet("/V1/ver_saldo/")]
         public IActionResult VerSaldo(string Titular)
         {
             try
@@ -124,7 +131,7 @@ namespace api_para_banco.Controllers
                     //cmd.Parameters.AddWithValue("@cpf", cpf); menos eficiente, string vai como varchar(400)
 
                     cmd.ExecuteNonQuery();
-                    return Ok($"Tranferência de {valor} da caixinha realizada com sucesso.");
+                    return Ok($"Tranferência realizada com sucesso");
                 }
             }
             catch (Exception ex) 

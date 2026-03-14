@@ -1,0 +1,42 @@
+﻿using api_para_banco.model;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.EntityFrameworkCore;
+
+namespace api_para_banco.Services
+{
+    public class AdmUtilidade
+    {
+        private readonly EntityFrameWorkModel _context;
+
+        public AdmUtilidade(EntityFrameWorkModel context)
+        {
+            _context = context;
+        }
+        
+        public async Task<string> PessoasComCaixinha(string? tipofiltro, string? filtro) 
+        {
+            var query = _context.ContaPoupanca.Join(_context.ContaCorrente,
+                        p => p.Investidor,
+                        c => c.Titular,
+                        (p, c) => new { p, c });
+
+            switch (tipofiltro) 
+            {
+
+                case "valorMinimo":
+                    query = query.Where(x => x.p.Saldo > decimal.Parse(filtro));
+                    break;
+                    
+                case "valorMaximo":
+                    query = query.Where(x => x.p.Saldo < decimal.Parse(filtro));
+                    break;
+
+                case "cpf":
+                    query = query.Where(x => x.c.Titular == filtro);
+                    break;
+            }
+            var resultado = await query.ToListAsync();
+            return $"{resultado.Count.ToString()}";
+        }    
+    }
+}
