@@ -21,9 +21,10 @@ namespace api_para_banco.Services
         {
             _context = context;
         }
-        
-        public async Task<List<string>> PessoasComCaixinha(string? tipofiltro, string? filtro) 
+
+        public async Task<ResultadoOperacaoDTO> PessoasComCaixinha(string? tipofiltro, string? filtro) 
         {
+
             try
             {
                 var query = _context.ContaPoupanca.Join(_context.ContaCorrente,
@@ -50,12 +51,18 @@ namespace api_para_banco.Services
                         query = query.Where(x => x.ContaCorrente.Titular == filtro);
                         break;
                 }
+                if(await query.Select(y=> y.ContaCorrente.Titular).AnyAsync())
+                    return new ResultadoOperacaoDTO() { statusCode = 404, resultados = new List<string>() };
+
                 var resultado = await query.Select(y => y.ContaCorrente.Titular).ToListAsync();
-                return resultado;
+
+                return new ResultadoOperacaoDTO() { statusCode = 200, resultados = resultado };
             }
             catch
             {
-                return new List<string>();
+
+                return new ResultadoOperacaoDTO() { statusCode = 500, resultados = new List<string>() };
+                
             }
         }    
         public async Task<int> AlterarSaldo (string titular, decimal valor) 
@@ -97,9 +104,9 @@ namespace api_para_banco.Services
         {
             try
             {
-                var conta = _context.ContaCorrente.Where(x => x.Titular == titular);
                 if (!await _context.ContaCorrente.Where(x => x.Titular == titular).AnyAsync())
                     return 404;
+                var conta = _context.ContaCorrente.Where(x => x.Titular == titular);
                 
                 conta.ExecuteDelete();
                 _context.SaveChanges();

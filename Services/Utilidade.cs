@@ -77,7 +77,8 @@ namespace api_para_banco.Services
                 var ContaTitular = _context.ContaCorrente.Where(x => x.Cpf == cpf && x.Saldo >= saldo)
                     .ExecuteUpdate(s => s.SetProperty(c => c.Saldo, c => c.Saldo - saldo));
                 if (ContaTitular == 0)
-                {   var ContaTitularExistente = _context.ContaCorrente.Any(x => x.Cpf == cpf);
+                {   
+                    var ContaTitularExistente = _context.ContaCorrente.Any(x => x.Cpf == cpf);
                     transaction.Rollback();
                     if(!ContaTitularExistente)
                         return 404;

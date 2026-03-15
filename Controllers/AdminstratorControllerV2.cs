@@ -1,8 +1,7 @@
 ﻿/*
  Todo:
- - Adcionar outros retornos como 404, 500 , etc para casos de erro , como conta já existente, ou erro de conexão.
+ - Adcionar outros retornos como 404, 500 , etc para casos de erro , como conta já existente, ou erro de conexão. -- feito
  - Implementar autenticação e autorização para garantir que apenas usuários autorizados possam acessar as funcionalidades do Adm.
- - Adicionar melhores tratamento de erros e mensagens de resposta mais informativas para os Admins.
  - Implementar testes unitários e de integração para garantir a qualidade do código e a funcionalidade correta das operações bancárias.
  - Considerar a implementação de um sistema de log para monitorar as atividades do cliente e facilitar a depuração em caso de problemas.
  - Avaliar a possibilidade de adicionar funcionalidades adicionais, como visualização de extrato bancário, gerenciamento de cartões de crédito, ou integração com serviços de terceiros para oferecer uma experiência mais completa aos clientes.
@@ -42,10 +41,12 @@ namespace api_para_banco.Controllers
         [HttpGet("/V2/Pessoas_Com_Caixinha")]
         public async Task<IActionResult> BuscaPessoasComCaixinhas([FromQuery]Filtro2 tipofiltro, string? cpf)
         {
-            List<string> resultado = await _admUtilidade.PessoasComCaixinha(tipofiltro.tipo.ToString(), cpf);
+            ResultadoOperacaoDTO resultado = await _admUtilidade.PessoasComCaixinha(tipofiltro.tipo.ToString(), cpf);
+            if(resultado.statusCode == 200)
+                return Ok(resultado);
 
+            return TratarErros(resultado.statusCode, "Nenhuma pessoa encontrada com os critérios fornecidos.", "Para de manipular o retorno.", "Erro Interno.");
 
-            return Ok(resultado);
         }
         [ApiVersion(2.0)]
         [HttpGet("/V2/Alterar_Saldo")]
@@ -55,7 +56,7 @@ namespace api_para_banco.Controllers
             if(resultado == 200)
                 return Ok(resultado);
             
-            return TratarErros(resultado, "Conta não encontrada", "Para de manipular o retorno", "Erro interno");
+            return TratarErros(resultado, "Conta não encontrada.", "Para de manipular o retorno.", "Erro interno.");
         }
         [ApiVersion(2.0)]
         [HttpPost("/V2/Criar_Conta")]
@@ -65,7 +66,7 @@ namespace api_para_banco.Controllers
             if (resultado == 200)
                 return Ok(resultado);
 
-            return TratarErros(resultado, "Para de manipular o retorno", "Conta ja existente", "Erro interno");
+            return TratarErros(resultado, "Para de manipular o retorno.", "Conta ja existente.", "Erro interno.");
 
         }
         [ApiVersion(2.0)]
@@ -75,7 +76,7 @@ namespace api_para_banco.Controllers
             int resultado = await _admUtilidade.ExcluirConta(titular);
             if (resultado == 200)
                 return Ok(resultado);
-            return TratarErros(resultado, "Conta não encontrada","Para de manipular o retorno","Erro interno");
+            return TratarErros(resultado, "Conta não encontrada.","Para de manipular o retorno.","Erro interno.");
         }
         public IActionResult TratarErros(int resultado, string ErrorNotFound, string ErrorConflict, string Error500)
         {
@@ -84,6 +85,7 @@ namespace api_para_banco.Controllers
                 404 => NotFound(ErrorNotFound),
                 409 => Conflict(ErrorConflict),
                 500 => StatusCode(500, Error500),
+                _ => StatusCode(500, "Erro desconhecido.")
             };
         }
     }
