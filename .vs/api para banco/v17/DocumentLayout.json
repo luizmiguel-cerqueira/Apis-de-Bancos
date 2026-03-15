@@ -1,0 +1,133 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\luizm\\source\\repos\\api para banco\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{D2604446-037A-4059-A976-2632FDF2917E}|api para banco\\api para banco.csproj|c:\\users\\luizm\\source\\repos\\api para banco\\api para banco\\controllers\\clientecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D2604446-037A-4059-A976-2632FDF2917E}|api para banco\\api para banco.csproj|solutionrelative:api para banco\\controllers\\clientecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D2604446-037A-4059-A976-2632FDF2917E}|api para banco\\api para banco.csproj|c:\\users\\luizm\\source\\repos\\api para banco\\api para banco\\controllers\\administratorcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D2604446-037A-4059-A976-2632FDF2917E}|api para banco\\api para banco.csproj|solutionrelative:api para banco\\controllers\\administratorcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D2604446-037A-4059-A976-2632FDF2917E}|api para banco\\api para banco.csproj|c:\\users\\luizm\\source\\repos\\api para banco\\api para banco\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D2604446-037A-4059-A976-2632FDF2917E}|api para banco\\api para banco.csproj|solutionrelative:api para banco\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D2604446-037A-4059-A976-2632FDF2917E}|api para banco\\api para banco.csproj|c:\\users\\luizm\\source\\repos\\api para banco\\api para banco\\properties\\launchsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{D2604446-037A-4059-A976-2632FDF2917E}|api para banco\\api para banco.csproj|solutionrelative:api para banco\\properties\\launchsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D2604446-037A-4059-A976-2632FDF2917E}|api para banco\\api para banco.csproj|c:\\users\\luizm\\source\\repos\\api para banco\\api para banco\\model\\classecon.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D2604446-037A-4059-A976-2632FDF2917E}|api para banco\\api para banco.csproj|solutionrelative:api para banco\\model\\classecon.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D2604446-037A-4059-A976-2632FDF2917E}|api para banco\\api para banco.csproj|c:\\users\\luizm\\source\\repos\\api para banco\\api para banco\\model\\modelobusca.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D2604446-037A-4059-A976-2632FDF2917E}|api para banco\\api para banco.csproj|solutionrelative:api para banco\\model\\modelobusca.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D2604446-037A-4059-A976-2632FDF2917E}|api para banco\\api para banco.csproj|c:\\users\\luizm\\source\\repos\\api para banco\\api para banco\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{D2604446-037A-4059-A976-2632FDF2917E}|api para banco\\api para banco.csproj|solutionrelative:api para banco\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 2,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "Program.cs",
+              "DocumentMoniker": "C:\\Users\\luizm\\source\\repos\\api para banco\\api para banco\\Program.cs",
+              "RelativeDocumentMoniker": "api para banco\\Program.cs",
+              "ToolTip": "C:\\Users\\luizm\\source\\repos\\api para banco\\api para banco\\Program.cs",
+              "RelativeToolTip": "api para banco\\Program.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAAiAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-09-02T15:28:27.885Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "launchSettings.json",
+              "DocumentMoniker": "C:\\Users\\luizm\\source\\repos\\api para banco\\api para banco\\Properties\\launchSettings.json",
+              "RelativeDocumentMoniker": "api para banco\\Properties\\launchSettings.json",
+              "ToolTip": "C:\\Users\\luizm\\source\\repos\\api para banco\\api para banco\\Properties\\launchSettings.json",
+              "RelativeToolTip": "api para banco\\Properties\\launchSettings.json",
+              "ViewState": "AgIAAAgAAAAAAAAAAAAYwCgAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2025-09-02T15:24:32.581Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "ClienteController.cs",
+              "DocumentMoniker": "C:\\Users\\luizm\\source\\repos\\api para banco\\api para banco\\Controllers\\ClienteController.cs",
+              "RelativeDocumentMoniker": "api para banco\\Controllers\\ClienteController.cs",
+              "ToolTip": "C:\\Users\\luizm\\source\\repos\\api para banco\\api para banco\\Controllers\\ClienteController.cs",
+              "RelativeToolTip": "api para banco\\Controllers\\ClienteController.cs",
+              "ViewState": "AgIAAGQAAAAAAAAAAAAAwHgAAABAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-09-02T12:56:41.846Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "ClasseCon.cs",
+              "DocumentMoniker": "C:\\Users\\luizm\\source\\repos\\api para banco\\api para banco\\model\\ClasseCon.cs",
+              "RelativeDocumentMoniker": "api para banco\\model\\ClasseCon.cs",
+              "ToolTip": "C:\\Users\\luizm\\source\\repos\\api para banco\\api para banco\\model\\ClasseCon.cs",
+              "RelativeToolTip": "api para banco\\model\\ClasseCon.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAuwAUAAAAFAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-09-02T15:41:55.106Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "appsettings.json",
+              "DocumentMoniker": "C:\\Users\\luizm\\source\\repos\\api para banco\\api para banco\\appsettings.json",
+              "RelativeDocumentMoniker": "api para banco\\appsettings.json",
+              "ToolTip": "C:\\Users\\luizm\\source\\repos\\api para banco\\api para banco\\appsettings.json",
+              "RelativeToolTip": "api para banco\\appsettings.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAABnAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2025-09-02T16:52:58.718Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "ModeloBusca.cs",
+              "DocumentMoniker": "C:\\Users\\luizm\\source\\repos\\api para banco\\api para banco\\model\\ModeloBusca.cs",
+              "RelativeDocumentMoniker": "api para banco\\model\\ModeloBusca.cs",
+              "ToolTip": "C:\\Users\\luizm\\source\\repos\\api para banco\\api para banco\\model\\ModeloBusca.cs",
+              "RelativeToolTip": "api para banco\\model\\ModeloBusca.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAQAAAAXAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-09-12T15:54:27.329Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "AdministratorController.cs",
+              "DocumentMoniker": "C:\\Users\\luizm\\source\\repos\\api para banco\\api para banco\\Controllers\\AdministratorController.cs",
+              "RelativeDocumentMoniker": "api para banco\\Controllers\\AdministratorController.cs",
+              "ToolTip": "C:\\Users\\luizm\\source\\repos\\api para banco\\api para banco\\Controllers\\AdministratorController.cs",
+              "RelativeToolTip": "api para banco\\Controllers\\AdministratorController.cs",
+              "ViewState": "AgIAADMAAAAAAAAAAAAuwDgAAAAsAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-09-07T19:27:46.993Z"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
