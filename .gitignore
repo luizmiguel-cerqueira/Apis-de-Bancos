@@ -1,0 +1,58 @@
+# Build results
+bin/
+obj/
+
+# Visual Studio
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Rider / VSCode
+.idea/
+.vscode/
+
+# Logs
+*.log
+
+# NuGet
+*.nupkg
+*.snupkg
+packages/
+*.nuget.props
+*.nuget.targets
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Test results
+TestResults/
+*.trx
+
+# Entity Framework
+Migrations/*.Designer.cs
+Migrations/*Snapshot.cs
+
+# Publish
+publish/
+out/
+
+# Azure
+*.azurePubxml
+*.publishsettings
+
+# Dotnet
+project.lock.json
+project.fragment.lock.json
+artifacts/
+
+# Temporary files
+*.tmp
+*.temp
+
+# Coverage
+coverage/
+*.coverage
+*.coveragexml
