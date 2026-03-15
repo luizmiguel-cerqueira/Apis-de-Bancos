@@ -29,12 +29,11 @@ namespace api_para_banco.Controllers
     }
     public class AdminstratorControllerV2 : Controller
     {
-        private readonly EntityFrameWorkModel _context;
+
         private readonly AdmUtilidade _admUtilidade;
         
         public AdminstratorControllerV2(EntityFrameWorkModel context)
-        {
-            _context = context;
+        { 
             _admUtilidade = new AdmUtilidade(context);
         }
 
@@ -42,10 +41,17 @@ namespace api_para_banco.Controllers
         [HttpGet("/V2/Pessoas_Com_Caixinha")]
         public async Task<IActionResult> BuscaPessoasComCaixinhas([FromQuery]Filtro2 tipofiltro, string? cpf)
         {
-            string resultado = await _admUtilidade.PessoasComCaixinha(tipofiltro.tipo.ToString(), cpf);
+            List<string> resultado = await _admUtilidade.PessoasComCaixinha(tipofiltro.tipo.ToString(), cpf);
 
+         
             return Ok(resultado);
         }
-
+        [ApiVersion(2.0)]
+        [HttpGet("/V2/Alterar_Saldo")]
+        public async Task<IActionResult> AlterarSaldo (string titular, decimal valor) 
+        {
+            string resultado = await _admUtilidade.AlterarSaldo(titular, valor);
+            return Ok(resultado);
+        }       
     }
 }

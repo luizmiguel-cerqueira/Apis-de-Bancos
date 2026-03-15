@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace api_para_banco.model;
 
@@ -16,5 +17,6 @@ public partial class ContaPoupanca
 
     public DateTime? DataCriacao { get; set; }
 
+    [ForeignKey("Cpf")]
     public virtual ContaCorrente CpfNavigation { get; set; } = null!;
 }
