@@ -29,48 +29,67 @@ namespace api_para_banco.Controllers
             _utilidade = new Utilidade(context);
             _strDeConexao = strDeCon.strDeConexao;
         }
+        
+        
         [ApiVersion(2.0)]
         [HttpGet("/V2/Ver_saldo")]
         public async Task<IActionResult> Versaldo(string titular)
         {
-            string saldo = await _utilidade.VerSaldo(titular);
+            int saldo = await _utilidade.VerSaldo(titular);
 
-            if (saldo != "")
-                return Ok(_utilidade.VerSaldo(titular));
+            if (saldo == 404)
+                return NotFound($"Titular {titular} não encontrado.");
 
-            return NotFound($"Titular {titular} não encontrado.");
+            return Ok(_utilidade.VerSaldo(titular));
         }
+        
+        
         [ApiVersion(2.0)]
         [HttpPut("/V2/Tranferencia_Bancaria")]
         public async Task<IActionResult> TranferenciaBancaria(string titular, string contaBeneficiada, decimal quantia)
         {
-            string resultado = await _utilidade.Tranferenciabancaria(titular, contaBeneficiada, quantia);
+            int resultado = await _utilidade.Tranferenciabancaria(titular, contaBeneficiada, quantia);
 
-            if (resultado != "")
-                return Ok(resultado);
+            if(resultado == 200)
+                return Ok($"Foi tranferido, {quantia} da conta do titular {titular} para {contaBeneficiada}");
 
-            return BadRequest(resultado);
+            return TratarErros(resultado, "Conta Beneficiaria ou titular não encontrado", "Saldo insuficiente", "Erro interno do servidor");
         }
+
+
         [ApiVersion(2.0)]
         [HttpPut("/V2/Colocar_Na_Caixinha")]
-
         public async Task<IActionResult> ColocarNaCaixinha(string cpf, decimal saldo)
         {
-            string resultado = await _utilidade.ColocarNaCaixinha(cpf, saldo);
-            if (resultado != "")
-                return Ok(resultado);
-            return BadRequest(resultado);
+            int resultado = await _utilidade.ColocarNaCaixinha(cpf, saldo);
+     
+            if(resultado == 200)
+                return Ok($"tranferido {saldo} para a caixinha");
+            
+            return TratarErros(resultado, "Caixinha ou conta não encontrada", "Saldo insuficiente", "Erro interno do servidor");
         }
+        
+        
         [ApiVersion(2.0)]
         [HttpPut("/V2/Retirar_Da_Caixinha")]
         public async Task<IActionResult> RetirarDaCaixinha(string cpf, decimal saldo)
         {
-            string resultado = await _utilidade.RetirarDaCaixinha(cpf, saldo);
-            
-            if (resultado != "")
-                return Ok(resultado);
-            return BadRequest(resultado);
+            int resultado = await _utilidade.RetirarDaCaixinha(cpf, saldo);
+            if(resultado == 200)
+                return Ok($"Retirado {saldo} da caixinha");
+    
+            return TratarErros(resultado, "Caixinha ou conta não encontrada", "Saldo insuficiente", "Erro interno do servidor");
+
         }
-           
+
+        public IActionResult TratarErros(int resultado, string ErrorNotFound, string ErrorConflict, string Error500) 
+        {
+            return resultado switch
+            {
+                404 => NotFound(ErrorNotFound),
+                409 => Conflict(ErrorConflict),
+                500 => StatusCode(500, Error500),
+            };
+        }
     }
 }

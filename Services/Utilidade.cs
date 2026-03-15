@@ -11,80 +11,134 @@ namespace api_para_banco.Services
         {
             _context = context;
         }
-        public async Task<string> VerSaldo(string titular)
+        public async Task<int> VerSaldo(string titular)
         {
-            var Contacorrente = _context.ContaCorrente.FirstOrDefault(x => x.Titular == titular);
-            if (Contacorrente != null)
-                return Contacorrente.Saldo.ToString();
+            try
+            {
+                var Contacorrente = _context.ContaCorrente.FirstOrDefault(x => x.Titular == titular);
+                if (Contacorrente != null)
+                    return int.Parse((Contacorrente.Saldo * 1000).ToString());
+                return 404;
 
-            return "";
+            }
+            catch
+            {
+                return 500;
+            }
         }
-        public async Task<string> Tranferenciabancaria(string titular, string contaBeneficiada, decimal quantia)
+        public async Task<int> Tranferenciabancaria(string titular, string contaBeneficiada, decimal quantia)
         {
-            using var transaction = await _context.Database.BeginTransactionAsync();
+            try 
+            { 
+            
+                using var transaction = await _context.Database.BeginTransactionAsync();
 
-            var ContaTitular = _context.ContaCorrente.Where(x => x.Titular == titular && x.Saldo >= quantia)
-                .ExecuteUpdate(s => s.SetProperty(c => c.Saldo, c => c.Saldo - quantia));
-            if (ContaTitular == 0)
-            {
-                transaction.Rollback();
-                return "Saldo insuficiente ou titular não encontrado.";
-            }
+                var ContaTitular = _context.ContaCorrente.Where(x => x.Titular == titular && x.Saldo >= quantia)
+                    .ExecuteUpdate(s => s.SetProperty(c => c.Saldo, c => c.Saldo - quantia));
+                if (ContaTitular == 0)
+                {
+                    var ContaTitularExistente = _context.ContaCorrente.Any(x => x.Titular == titular);
+                    transaction.Rollback();
 
-            var ContaBeneficiada = _context.ContaCorrente.Where(y => y.Titular == contaBeneficiada)
-                .ExecuteUpdate(s => s.SetProperty(e => e.Saldo, e => e.Saldo + quantia));
-            if (ContaTitular == 0)
+                    if (!ContaTitularExistente)
+                        return 404;
+
+                    return 409;
+
+                }
+
+                var ContaBeneficiada = _context.ContaCorrente.Where(y => y.Titular == contaBeneficiada)
+                    .ExecuteUpdate(s => s.SetProperty(e => e.Saldo, e => e.Saldo + quantia));
+                if (ContaBeneficiada == 0)
+                {
+                    var ContabeneficiadaExistente = _context.ContaCorrente.Any(x => x.Titular == contaBeneficiada);
+                    transaction.Rollback();
+                    if(!ContabeneficiadaExistente)
+                        return 404;
+                    return 409;
+                }
+                
+                _context.SaveChanges();
+                transaction.Commit();
+                return 200;
+            } 
+            
+            catch
             {
-                transaction.Rollback();
-                return "Conta beneficiaria não encontrada não encontrado.";
+                return 500;
             }
-            _context.SaveChanges();
-            transaction.Commit();
-            return $"O titular {titular} tranferiu {quantia:F2} para a conta {contaBeneficiada}";
         }
-        public async Task<string> ColocarNaCaixinha(string cpf, decimal saldo)
+        public async Task<int> ColocarNaCaixinha(string cpf, decimal saldo)
         {
-            using var transaction = await _context.Database.BeginTransactionAsync();
-
-            var ContaTitular = _context.ContaCorrente.Where(x => x.Cpf == cpf && x.Saldo >= saldo)
-                .ExecuteUpdate(s => s.SetProperty(c => c.Saldo, c => c.Saldo - saldo));
-            if (ContaTitular == 0)
+            try
             {
-                transaction.Rollback();
-                return "Saldo insuficiente ou titular não encontrado.";
-            }
-            var ContaPoupanca = _context.ContaPoupanca.Where(y => y.Cpf == cpf)
-                .ExecuteUpdate(s => s.SetProperty(c => c.Saldo, c => c.Saldo + saldo));
-            if (ContaPoupanca == 0)
-            {
-                transaction.Rollback();
-                return "Conta poupança não encontrada.";
-            }
-            _context.SaveChanges();
-            transaction.Commit();
+                using var transaction = await _context.Database.BeginTransactionAsync();
 
-            return $"O titular {cpf} colocou {saldo:F2} na caixinha.";
+                var ContaTitular = _context.ContaCorrente.Where(x => x.Cpf == cpf && x.Saldo >= saldo)
+                    .ExecuteUpdate(s => s.SetProperty(c => c.Saldo, c => c.Saldo - saldo));
+                if (ContaTitular == 0)
+                {   var ContaTitularExistente = _context.ContaCorrente.Any(x => x.Cpf == cpf);
+                    transaction.Rollback();
+                    if(!ContaTitularExistente)
+                        return 404;
+                    return 409;
+                }
+                var ContaPoupanca = _context.ContaPoupanca.Where(y => y.Cpf == cpf)
+                    .ExecuteUpdate(s => s.SetProperty(c => c.Saldo, c => c.Saldo + saldo));
+                if (ContaPoupanca == 0)
+                {
+                    var ContaPoupancaExistente = _context.ContaPoupanca.Any(x => x.Cpf == cpf);
+                    transaction.Rollback();
+                    if (!ContaPoupancaExistente)
+                        return 404;
+                    return 409;
+                }
+                _context.SaveChanges();
+                transaction.Commit();
+
+                return 200;
+            }
+            catch 
+            {
+                return 500;
+            }
         }
-        public async Task<string> RetirarDaCaixinha(string cpf, decimal saldo)
+        public async Task<int> RetirarDaCaixinha(string cpf, decimal saldo)
         {
-            using var transaction = await _context.Database.BeginTransactionAsync();
-            var ContaPoupanca = _context.ContaPoupanca.Where(x => x.Cpf == cpf && x.Saldo >= saldo)
-                .ExecuteUpdate(s => s.SetProperty(c => c.Saldo, c => c.Saldo - saldo));
-            if (ContaPoupanca == 0)
-            {
-                transaction.Rollback();
-                return "Saldo insuficiente ou titular não encontrado.";
+            try
+            { 
+                using var transaction = await _context.Database.BeginTransactionAsync();
+                var ContaPoupanca = _context.ContaPoupanca.Where(x => x.Cpf == cpf && x.Saldo >= saldo)
+                    .ExecuteUpdate(s => s.SetProperty(c => c.Saldo, c => c.Saldo - saldo));
+                if (ContaPoupanca == 0)
+                {   
+                    var ContaPoupancaExistente = _context.ContaPoupanca.Any(x => x.Cpf == cpf);
+                    transaction.Rollback();
+                    
+                    if (!ContaPoupancaExistente)
+                        return 404;
+                    return 409;
+                }
+                var ContaCorrente = _context.ContaCorrente.Where(y => y.Cpf == cpf)
+                    .ExecuteUpdate(s => s.SetProperty(c => c.Saldo, c => c.Saldo + saldo));
+                if (ContaCorrente == 0)
+                {
+                    var ContaTitularExistente = _context.ContaCorrente.Any(x => x.Cpf == cpf);
+                    transaction.Rollback();
+
+                    if (!ContaTitularExistente)
+                        return 404;
+                    return 409;
+                }
+                _context.SaveChanges();
+                transaction.Commit();
+                return 200;
             }
-            var ContaCorrente = _context.ContaCorrente.Where(y => y.Cpf == cpf)
-                .ExecuteUpdate(s => s.SetProperty(c => c.Saldo, c => c.Saldo + saldo));
-            if (ContaCorrente == 0)
+            catch 
             {
-                transaction.Rollback();
-                return "Conta corrente não encontrada.";
+                return 500;
             }
-            _context.SaveChanges();
-            transaction.Commit();
-            return $"O titular {cpf} retirou {saldo:F2} da caixinha.";
         }
+
     }
 }
