@@ -22,15 +22,6 @@ var conection = builder.Configuration.GetConnectionString("Default");
 builder.Services.AddDbContext<EntityFrameWorkModel>(
     options => options.UseSqlServer(conection));
 
-builder.Services.AddSwaggerGen(opitions =>
-{
-    opitions.MapType<DateTime>(() => new Microsoft.OpenApi.Models.OpenApiSchema
-    {
-        Type = "string",
-        Format = "date-time",
-    }
-    );
-});
 
 
 //Para usar o versinamento de api

@@ -8,6 +8,7 @@
  - Garantir a segurança dos dados dos clientes, implementando medidas de proteção contra ataques cibernéticos e garantindo a conformidade com as regulamentações de privacidade de dados. Calma Copilot n to nesse nivel
  - Otimizar o desempenho das operações bancárias, especialmente para transações de alta frequência, utilizando técnicas como caching ou otimização de consultas ao banco de dados.
 */
+using api_para_banco.Domain.Enums;
 using api_para_banco.model;
 using api_para_banco.Services;
 using Asp.Versioning;
@@ -19,15 +20,11 @@ namespace api_para_banco.Controllers
     public class ClienteControllerV2cs : Controller
     {
 
-        readonly string _strDeConexao;
-        readonly EntityFrameWorkModel _context;
         readonly Utilidade _utilidade;
 
         public ClienteControllerV2cs(ClasseCon strDeCon, EntityFrameWorkModel context)
         {
-            _context = context;
             _utilidade = new Utilidade(context);
-            _strDeConexao = strDeCon.strDeConexao;
         }
         
         
@@ -35,12 +32,12 @@ namespace api_para_banco.Controllers
         [HttpGet("/V2/Ver_saldo")]
         public async Task<IActionResult> Versaldo(string titular)
         {
-            int saldo = await _utilidade.VerSaldo(titular);
+            var resultado = await _utilidade.VerSaldo(titular);
 
-            if (saldo == 404)
+            if (resultado.retorno == TipoRetorno.NaoEncontrado)
                 return NotFound($"Titular {titular} não encontrado.");
 
-            return Ok(_utilidade.VerSaldo(titular));
+            return Ok(resultado.valor);
         }
         
         
@@ -48,9 +45,9 @@ namespace api_para_banco.Controllers
         [HttpPut("/V2/Tranferencia_Bancaria")]
         public async Task<IActionResult> TranferenciaBancaria(string titular, string contaBeneficiada, decimal quantia)
         {
-            int resultado = await _utilidade.Tranferenciabancaria(titular, contaBeneficiada, quantia);
+            TipoRetorno resultado = await _utilidade.Tranferenciabancaria(titular, contaBeneficiada, quantia);
 
-            if(resultado == 200)
+            if(resultado == TipoRetorno.Sucesso)
                 return Ok($"Foi tranferido, {quantia} da conta do titular {titular} para {contaBeneficiada}");
 
             return TratarErros(resultado, "Conta Beneficiaria ou titular não encontrado", "Saldo insuficiente", "Erro interno do servidor");
@@ -61,9 +58,9 @@ namespace api_para_banco.Controllers
         [HttpPut("/V2/Colocar_Na_Caixinha")]
         public async Task<IActionResult> ColocarNaCaixinha(string cpf, decimal saldo)
         {
-            int resultado = await _utilidade.ColocarNaCaixinha(cpf, saldo);
+            TipoRetorno resultado = await _utilidade.ColocarNaCaixinha(cpf, saldo);
      
-            if(resultado == 200)
+            if(resultado == TipoRetorno.Sucesso)
                 return Ok($"tranferido {saldo} para a caixinha");
             
             return TratarErros(resultado, "Caixinha ou conta não encontrada", "Saldo insuficiente", "Erro interno do servidor");
@@ -74,21 +71,21 @@ namespace api_para_banco.Controllers
         [HttpPut("/V2/Retirar_Da_Caixinha")]
         public async Task<IActionResult> RetirarDaCaixinha(string cpf, decimal saldo)
         {
-            int resultado = await _utilidade.RetirarDaCaixinha(cpf, saldo);
-            if(resultado == 200)
+            TipoRetorno resultado = await _utilidade.RetirarDaCaixinha(cpf, saldo);
+            if(resultado == TipoRetorno.Sucesso)
                 return Ok($"Retirado {saldo} da caixinha");
     
             return TratarErros(resultado, "Caixinha ou conta não encontrada", "Saldo insuficiente", "Erro interno do servidor");
 
         }
 
-        public IActionResult TratarErros(int resultado, string ErrorNotFound, string ErrorConflict, string Error500) 
+        public IActionResult TratarErros(TipoRetorno resultado, string ErrorNotFound, string ErrorConflict, string Error500) 
         {
             return resultado switch
             {
-                404 => NotFound(ErrorNotFound),
-                409 => Conflict(ErrorConflict),
-                500 => StatusCode(500, Error500),
+                TipoRetorno.NaoEncontrado => NotFound(ErrorNotFound),
+                TipoRetorno.Conflito => Conflict(ErrorConflict),
+                TipoRetorno.ErroInterno => StatusCode(500, Error500),
                 _ => StatusCode(500, "Erro desconhecido.")
             };
         }

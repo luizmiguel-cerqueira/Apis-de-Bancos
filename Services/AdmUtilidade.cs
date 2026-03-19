@@ -1,13 +1,14 @@
 ﻿/*
+ Already todo:
+    //Melhorar a validação, como sempre garantir que o titular exista. -- feito
+    //Colocar Try catch para tratar casos como erro de conexão ou outros erros inesperados.-- feito
 Todo:
-
-- Melhorar a validação, como sempre garantir que o titular exista.
-- Colocar Try catch para tratar casos como erro de conexão ou outros erros inesperados.
-- Adicionar logs para facilitar a identificação de problemas.
-- 
+    - Adicionar logs para facilitar a identificação de problemas.
+    - 
  */
-
+using api_para_banco.Domain.Enums;
 using api_para_banco.model;
+using api_para_banco.model.DTO;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 
@@ -15,13 +16,14 @@ namespace api_para_banco.Services
 {
     public class AdmUtilidade
     {
+        
         private readonly EntityFrameWorkModel _context;
 
         public AdmUtilidade(EntityFrameWorkModel context)
         {
             _context = context;
         }
-
+        
         public async Task<ResultadoOperacaoDTO> PessoasComCaixinha(string? tipofiltro, string? filtro) 
         {
 
@@ -52,71 +54,72 @@ namespace api_para_banco.Services
                         break;
                 }
                 if(await query.Select(y=> y.ContaCorrente.Titular).AnyAsync())
-                    return new ResultadoOperacaoDTO() { statusCode = 404, resultados = new List<string>() };
+                    return new ResultadoOperacaoDTO() { statusCode = TipoRetorno.NaoEncontrado, resultados = new List<string>() };
 
                 var resultado = await query.Select(y => y.ContaCorrente.Titular).ToListAsync();
 
-                return new ResultadoOperacaoDTO() { statusCode = 200, resultados = resultado };
+                return new ResultadoOperacaoDTO() { statusCode = TipoRetorno.Sucesso, resultados = resultado };
             }
             catch
             {
 
-                return new ResultadoOperacaoDTO() { statusCode = 500, resultados = new List<string>() };
+                return new ResultadoOperacaoDTO() { statusCode = TipoRetorno.ErroInterno, resultados = new List<string>() };
                 
             }
-        }    
-        public async Task<int> AlterarSaldo (string titular, decimal valor) 
+        }
+        
+        public async  Task<TipoRetorno> AlterarSaldo (string titular, decimal valor) 
         {
             try
             {
-                var conta = _context.ContaCorrente.Where(x=> x.Titular == titular).ExecuteUpdate(y=> y.SetProperty(s=> s.Saldo, s => s.Saldo + valor)) ;
+                var conta =  _context.ContaCorrente.Where(x=> x.Titular == titular).ExecuteUpdate(y=> y.SetProperty(s=> s.Saldo, s => s.Saldo + valor)) ;
                 if (conta == 0)
-                    return 404;
+                    return TipoRetorno.NaoEncontrado;
 
-                return 200;
+                return TipoRetorno.Sucesso;
             }
             catch 
             {
-                return 500;
+                return TipoRetorno.ErroInterno;
             }
         }
-        public async Task<int> AdcionarConta(string titular, string senha, string cpf, string numconta, DateOnly dataNascimento)
+        public async Task<TipoRetorno> AdcionarConta(string titular, string senha, string cpf, string numconta, DateOnly dataNascimento)
         {
             try
             {
                 var novaConta = _context.ContaCorrente.Add(new ContaCorrente { Titular = titular, Senha = senha, Cpf = cpf, DataCriacao = DateTime.Now, Dtnascimento = dataNascimento, NumConta = numconta, Ativo = true, Saldo = 0});
                 await _context.SaveChangesAsync();
                 
-                return 200;
+                return TipoRetorno.Sucesso;
 
             }
             catch(DbUpdateException)
             { 
-                return 409;
+                return TipoRetorno.Conflito;
 
             }
             catch  (Exception) 
             {
-                return 500;
+                return TipoRetorno.ErroInterno;
             }
         }
-        public async Task<int> ExcluirConta(string titular) 
+        public async Task<TipoRetorno> ExcluirConta(string titular) 
         {
             try
             {
                 if (!await _context.ContaCorrente.Where(x => x.Titular == titular).AnyAsync())
-                    return 404;
+                    return TipoRetorno.NaoEncontrado;
                 var conta = _context.ContaCorrente.Where(x => x.Titular == titular);
                 
                 conta.ExecuteDelete();
                 _context.SaveChanges();
             
-                return 200;
+                return TipoRetorno.Sucesso;
 
             }
             catch 
             {
-                return 500;
+                return TipoRetorno.ErroInterno;
             }
         }
     }

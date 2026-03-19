@@ -1,4 +1,6 @@
-﻿using api_para_banco.model;
+﻿using api_para_banco.Domain.Enums;
+using api_para_banco.model;
+using api_para_banco.model.DTO;
 using Microsoft.CodeAnalysis.Elfie.Model.Tree;
 using Microsoft.EntityFrameworkCore;
 namespace api_para_banco.Services
@@ -11,22 +13,23 @@ namespace api_para_banco.Services
         {
             _context = context;
         }
-        public async Task<int> VerSaldo(string titular)
+        public async Task<VerSaldoDTO> VerSaldo(string titular)
         {
             try
             {
                 var Contacorrente = _context.ContaCorrente.FirstOrDefault(x => x.Titular == titular);
                 if (Contacorrente != null)
-                    return int.Parse((Contacorrente.Saldo * 1000).ToString());
-                return 404;
+                    return new VerSaldoDTO() {retorno = TipoRetorno.Sucesso , valor = int.Parse((Contacorrente.Saldo * 1000).ToString()) };
+
+                return new VerSaldoDTO() { retorno = TipoRetorno.NaoEncontrado, valor = 0 };
 
             }
             catch
             {
-                return 500;
+                return new VerSaldoDTO() { retorno = TipoRetorno.ErroInterno, valor = 0};
             }
         }
-        public async Task<int> Tranferenciabancaria(string titular, string contaBeneficiada, decimal quantia)
+        public async Task<TipoRetorno> Tranferenciabancaria(string titular, string contaBeneficiada, decimal quantia)
         {
             try 
             { 
@@ -41,9 +44,9 @@ namespace api_para_banco.Services
                     transaction.Rollback();
 
                     if (!ContaTitularExistente)
-                        return 404;
+                        return TipoRetorno.NaoEncontrado;
 
-                    return 409;
+                    return TipoRetorno.Conflito;
 
                 }
 
@@ -54,21 +57,21 @@ namespace api_para_banco.Services
                     var ContabeneficiadaExistente = _context.ContaCorrente.Any(x => x.Titular == contaBeneficiada);
                     transaction.Rollback();
                     if(!ContabeneficiadaExistente)
-                        return 404;
-                    return 409;
+                        return TipoRetorno.NaoEncontrado;
+                    return TipoRetorno.Conflito;
                 }
                 
                 _context.SaveChanges();
                 transaction.Commit();
-                return 200;
+                return TipoRetorno.Conflito;
             } 
             
             catch
             {
-                return 500;
+                return TipoRetorno.ErroInterno;
             }
         }
-        public async Task<int> ColocarNaCaixinha(string cpf, decimal saldo)
+        public async Task<TipoRetorno> ColocarNaCaixinha(string cpf, decimal saldo)
         {
             try
             {
@@ -81,8 +84,8 @@ namespace api_para_banco.Services
                     var ContaTitularExistente = _context.ContaCorrente.Any(x => x.Cpf == cpf);
                     transaction.Rollback();
                     if(!ContaTitularExistente)
-                        return 404;
-                    return 409;
+                        return TipoRetorno.NaoEncontrado;
+                    return TipoRetorno.Conflito;
                 }
                 var ContaPoupanca = _context.ContaPoupanca.Where(y => y.Cpf == cpf)
                     .ExecuteUpdate(s => s.SetProperty(c => c.Saldo, c => c.Saldo + saldo));
@@ -91,20 +94,20 @@ namespace api_para_banco.Services
                     var ContaPoupancaExistente = _context.ContaPoupanca.Any(x => x.Cpf == cpf);
                     transaction.Rollback();
                     if (!ContaPoupancaExistente)
-                        return 404;
-                    return 409;
+                        return TipoRetorno.NaoEncontrado;
+                    return TipoRetorno.Conflito;
                 }
                 _context.SaveChanges();
                 transaction.Commit();
 
-                return 200;
+                return TipoRetorno.Sucesso;
             }
             catch 
             {
-                return 500;
+                return TipoRetorno.ErroInterno;
             }
         }
-        public async Task<int> RetirarDaCaixinha(string cpf, decimal saldo)
+        public async Task<TipoRetorno> RetirarDaCaixinha(string cpf, decimal saldo)
         {
             try
             { 
@@ -117,8 +120,8 @@ namespace api_para_banco.Services
                     transaction.Rollback();
                     
                     if (!ContaPoupancaExistente)
-                        return 404;
-                    return 409;
+                        return TipoRetorno.NaoEncontrado;
+                    return TipoRetorno.Conflito;
                 }
                 var ContaCorrente = _context.ContaCorrente.Where(y => y.Cpf == cpf)
                     .ExecuteUpdate(s => s.SetProperty(c => c.Saldo, c => c.Saldo + saldo));
@@ -128,16 +131,16 @@ namespace api_para_banco.Services
                     transaction.Rollback();
 
                     if (!ContaTitularExistente)
-                        return 404;
-                    return 409;
+                        return TipoRetorno.NaoEncontrado;
+                    return TipoRetorno.Conflito;
                 }
                 _context.SaveChanges();
                 transaction.Commit();
-                return 200;
+                return TipoRetorno.Sucesso;
             }
             catch 
             {
-                return 500;
+                return TipoRetorno.ErroInterno;
             }
         }
 

@@ -1,4 +1,4 @@
-﻿namespace api_para_banco.model
+﻿namespace api_para_banco.model.DTO
 {
     public class PessoaComCaixinhaDTO
     {

@@ -10,7 +10,9 @@
  -  
 */
 
+using api_para_banco.Domain.Enums;
 using api_para_banco.model;
+using api_para_banco.model.DTO;
 using api_para_banco.Services;
 using Asp.Versioning;
 using Microsoft.AspNetCore.Mvc;
@@ -42,49 +44,51 @@ namespace api_para_banco.Controllers
         public async Task<IActionResult> BuscaPessoasComCaixinhas([FromQuery]Filtro2 tipofiltro, string? cpf)
         {
             ResultadoOperacaoDTO resultado = await _admUtilidade.PessoasComCaixinha(tipofiltro.tipo.ToString(), cpf);
-            if(resultado.statusCode == 200)
+            if(resultado.statusCode == TipoRetorno.Sucesso)
                 return Ok(resultado);
 
-            return TratarErros(resultado.statusCode, "Nenhuma pessoa encontrada com os critérios fornecidos.", "Para de manipular o retorno.", "Erro Interno.");
+            return TratarErros(resultado.statusCode);
 
         }
         [ApiVersion(2.0)]
         [HttpGet("/V2/Alterar_Saldo")]
         public async Task<IActionResult> AlterarSaldo (string titular, decimal valor) 
         {
-            int resultado = await _admUtilidade.AlterarSaldo(titular, valor);
-            if(resultado == 200)
-                return Ok(resultado);
+            TipoRetorno resultado = await _admUtilidade.AlterarSaldo(titular, valor);
             
-            return TratarErros(resultado, "Conta não encontrada.", "Para de manipular o retorno.", "Erro interno.");
+            if(resultado == TipoRetorno.Sucesso)
+                return Ok(resultado);
+
+            return TratarErros(resultado);
         }
         [ApiVersion(2.0)]
         [HttpPost("/V2/Criar_Conta")]
         public async Task<IActionResult> CriarConta(string titular, string senha, string cpf, string numConta , DateOnly dataNascimento) 
         {
-            int resultado = await _admUtilidade.AdcionarConta(titular, senha, cpf, numConta, dataNascimento);
-            if (resultado == 200)
+            TipoRetorno resultado = await _admUtilidade.AdcionarConta(titular, senha, cpf, numConta, dataNascimento);
+            if (resultado == TipoRetorno.Sucesso)
                 return Ok(resultado);
 
-            return TratarErros(resultado, "Para de manipular o retorno.", "Conta ja existente.", "Erro interno.");
+            return TratarErros(resultado);
 
         }
         [ApiVersion(2.0)]
         [HttpPost("/V2/Excluir_Conta")]
         public async Task<IActionResult> ExcluirConta(string titular)
         {
-            int resultado = await _admUtilidade.ExcluirConta(titular);
-            if (resultado == 200)
+            TipoRetorno resultado = await _admUtilidade.ExcluirConta(titular);
+            if (resultado == TipoRetorno.Sucesso)
                 return Ok(resultado);
-            return TratarErros(resultado, "Conta não encontrada.","Para de manipular o retorno.","Erro interno.");
+
+            return TratarErros(resultado);
         }
-        public IActionResult TratarErros(int resultado, string ErrorNotFound, string ErrorConflict, string Error500)
+        public IActionResult TratarErros(TipoRetorno resultado)
         {
             return resultado switch
             {
-                404 => NotFound(ErrorNotFound),
-                409 => Conflict(ErrorConflict),
-                500 => StatusCode(500, Error500),
+                TipoRetorno.NaoEncontrado => NotFound("Conta não encontrada."),
+                TipoRetorno.Conflito => Conflict("Operação inválida."),
+                TipoRetorno.ErroInterno => StatusCode(500, "Erro interno."),
                 _ => StatusCode(500, "Erro desconhecido.")
             };
         }
