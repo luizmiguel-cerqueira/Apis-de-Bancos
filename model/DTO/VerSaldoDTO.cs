@@ -5,6 +5,6 @@ namespace api_para_banco.model.DTO
     public class VerSaldoDTO
     {
         public TipoRetorno retorno { get; set; }
-        public int valor { get; set; }
+        public decimal valor { get; set; }
     }
 }

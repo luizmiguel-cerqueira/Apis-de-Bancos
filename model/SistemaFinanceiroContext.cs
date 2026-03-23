@@ -6,8 +6,10 @@ namespace api_para_banco.model;
 
 public partial class SistemaFinanceiroContext : DbContext
 {
-    public SistemaFinanceiroContext()
+    SqlServerModel _sqlServerModel = new SqlServerModel();
+    public SistemaFinanceiroContext(SqlServerModel sql)
     {
+        _sqlServerModel = sql;
     }
 
     public SistemaFinanceiroContext(DbContextOptions<SistemaFinanceiroContext> options)
@@ -25,7 +27,7 @@ public partial class SistemaFinanceiroContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseSqlServer("Server=(localdb)\\MSSQLLocalDB;Database=SistemaFinanceiro;Trusted_Connection=True;Encrypt=False;");
+        => optionsBuilder.UseSqlServer(_sqlServerModel.ConnectionString);
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

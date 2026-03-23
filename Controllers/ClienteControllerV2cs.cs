@@ -14,6 +14,7 @@ using api_para_banco.Services;
 using Asp.Versioning;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Identity.Client;
+using System.Drawing;
 
 namespace api_para_banco.Controllers
 {

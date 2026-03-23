@@ -19,14 +19,14 @@ namespace api_para_banco.Services
             {
                 var Contacorrente = _context.ContaCorrente.FirstOrDefault(x => x.Titular == titular);
                 if (Contacorrente != null)
-                    return new VerSaldoDTO() {retorno = TipoRetorno.Sucesso , valor = int.Parse((Contacorrente.Saldo * 1000).ToString()) };
+                    return new VerSaldoDTO() { retorno = TipoRetorno.Sucesso, valor = Contacorrente.Saldo};
 
                 return new VerSaldoDTO() { retorno = TipoRetorno.NaoEncontrado, valor = 0 };
 
             }
             catch
             {
-                return new VerSaldoDTO() { retorno = TipoRetorno.ErroInterno, valor = 0};
+                return new VerSaldoDTO() { retorno = TipoRetorno.ErroInterno, valor = 0 };
             }
         }
         public async Task<TipoRetorno> Tranferenciabancaria(string titular, string contaBeneficiada, decimal quantia)

@@ -7,7 +7,7 @@ namespace api_para_banco.model;
 
 public partial class ContaCorrente
 {
-    public decimal? Saldo { get; set; }
+    public decimal Saldo { get; set; }
 
     [Key]
     public string Cpf { get; set; } = null!;
