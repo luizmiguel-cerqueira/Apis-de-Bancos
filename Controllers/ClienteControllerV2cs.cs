@@ -8,12 +8,14 @@
  - Garantir a segurança dos dados dos clientes, implementando medidas de proteção contra ataques cibernéticos e garantindo a conformidade com as regulamentações de privacidade de dados. Calma Copilot n to nesse nivel
  - Otimizar o desempenho das operações bancárias, especialmente para transações de alta frequência, utilizando técnicas como caching ou otimização de consultas ao banco de dados.
 */
+using api_para_banco.Aplication.Commands;
+using api_para_banco.Aplication.Services;
 using api_para_banco.Domain.Enums;
-using api_para_banco.model;
-using api_para_banco.Services;
+using api_para_banco.Infrastructure.model;
 using Asp.Versioning;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Identity.Client;
+using Swashbuckle.AspNetCore.SwaggerGen;
 using System.Drawing;
 
 namespace api_para_banco.Controllers
@@ -23,7 +25,7 @@ namespace api_para_banco.Controllers
 
         readonly Utilidade _utilidade;
 
-        public ClienteControllerV2cs(ClasseCon strDeCon, EntityFrameWorkModel context)
+        public ClienteControllerV2cs(ClasseCon strDeCon, EntityFrameWorkModel context, HttpClient httpClient)
         {
             _utilidade = new Utilidade(context);
         }
@@ -44,12 +46,12 @@ namespace api_para_banco.Controllers
         
         [ApiVersion(2.0)]
         [HttpPut("/V2/Tranferencia_Bancaria")]
-        public async Task<IActionResult> TranferenciaBancaria(string titular, string contaBeneficiada, decimal quantia)
+        public async Task<IActionResult> TranferenciaBancaria(TransferenciaCommand command)
         {
-            TipoRetorno resultado = await _utilidade.Tranferenciabancaria(titular, contaBeneficiada, quantia);
+            TipoRetorno resultado = await _utilidade.Tranferenciabancaria(command);
 
             if(resultado == TipoRetorno.Sucesso)
-                return Ok($"Foi tranferido, {quantia} da conta do titular {titular} para {contaBeneficiada}");
+                return Ok($"Foi tranferido, {command.valor} da conta do titular {command.contaTitular} para {command.contaFavorecido}");
 
             return TratarErros(resultado, "Conta Beneficiaria ou titular não encontrado", "Saldo insuficiente", "Erro interno do servidor");
         }

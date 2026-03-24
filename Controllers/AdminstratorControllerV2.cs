@@ -9,11 +9,11 @@
  - Otimizar o desempenho das operações bancárias, especialmente para transações de alta frequência, utilizando técnicas como caching ou otimização de consultas ao banco de dados.
  -  
 */
-
+//talvez seja bom melhorar o sistema de decisão do erro.
+using api_para_banco.Aplication.Services;
 using api_para_banco.Domain.Enums;
-using api_para_banco.model;
-using api_para_banco.model.DTO;
-using api_para_banco.Services;
+using api_para_banco.Infrastructure.Data.DTO;
+using api_para_banco.Infrastructure.model;
 using Asp.Versioning;
 using Microsoft.AspNetCore.Mvc;
 

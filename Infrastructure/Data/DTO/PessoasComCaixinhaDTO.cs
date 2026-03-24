@@ -1,4 +1,6 @@
-﻿namespace api_para_banco.model.DTO
+﻿using api_para_banco.Infrastructure.model;
+
+namespace api_para_banco.Infrastructure.Data.DTO
 {
     public class PessoaComCaixinhaDTO
     {

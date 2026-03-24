@@ -1,6 +1,6 @@
 ﻿using api_para_banco.Domain.Enums;
 
-namespace api_para_banco.model.DTO
+namespace api_para_banco.Infrastructure.Data.DTO
 {
     public class VerSaldoDTO
     {

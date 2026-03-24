@@ -1,5 +1,5 @@
 ﻿using api_para_banco.Controllers;
-using api_para_banco.model;
+using api_para_banco.Infrastructure.model;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 using System.Data;
@@ -20,7 +20,7 @@ namespace api_para_banco.Controllers
     {
         readonly string _strDeConexao;
 
-        public AdministratorController(model.ClasseCon strDeCon)
+        public AdministratorController(ClasseCon strDeCon)
         {
             _strDeConexao = strDeCon.strDeConexao;
         }

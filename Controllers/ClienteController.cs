@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Data.SqlClient;
-using api_para_banco.Services;
-using api_para_banco.model;
 using Microsoft.Data.SqlClient;
 using System.Data;
 using Asp.Versioning;
+using api_para_banco.Aplication.Services;
+using api_para_banco.Infrastructure.model;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -16,7 +16,6 @@ namespace api_para_banco.Controllers
     [ApiController]
     public class ClienteController : ControllerBase
     {
-
         readonly string _strDeConexao;
         readonly EntityFrameWorkModel _Context;
         Utilidade _utilidade;
