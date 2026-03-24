@@ -1,10 +1,11 @@
 using api_para_banco.Controllers;
 using api_para_banco.model;
 using Asp.Versioning;
-using Polly;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using System.Text.Json.Serialization;
+using Microsoft.AspNetCore.Mvc;
+using Polly;
 
 var tipo = new Filtro();
 var builder = WebApplication.CreateBuilder(args);
@@ -18,13 +19,17 @@ AddJsonOptions(options =>
 }
 );
 //polly
+
 // em desenv
 //fazer bind no obj SqlServerModel;
 builder.Services.AddOptions<SqlServerModel>()
     .BindConfiguration(SqlServerModel.Section)
     .ValidateDataAnnotations()
     .ValidateOnStart();
-
+object value = builder.Services.AddHttpClient<ClienteControllerV2cs>(c => 
+{
+    c.BaseAddress = new Uri("http://localhost:5021");
+}).AddTransientHttpErrorPolicy( policy => policy.WaitAndRetryAsync(3,_ => TimeSpan.FromSeconds(Math.Pow(2,_)))).AddTransientHttpErrorPolicy(policy => policy.CircuitBreakerAsync(3,TimeSpan.FromSeconds(30)));
 // Para usar o Entity Framework, foi necessário adcionar o serviço dp dbContext, passando a string de conexão do banco de dados para o construtor do EntityFrameWorkModel
 builder.Services.AddDbContext<EntityFrameWorkModel> ((
     ServiceProvider, options) =>
