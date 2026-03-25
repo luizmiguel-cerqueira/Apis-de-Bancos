@@ -6,6 +6,7 @@ Todo:
     - Adicionar logs para facilitar a identificação de problemas.
     - 
  */
+using api_para_banco.Aplication.Commands;
 using api_para_banco.Domain.Enums;
 using api_para_banco.Infrastructure.Data.DTO;
 using api_para_banco.Infrastructure.model;
@@ -82,11 +83,20 @@ namespace api_para_banco.Aplication.Services
                 return TipoRetorno.ErroInterno;
             }
         }
-        public async Task<TipoRetorno> AdcionarConta(string titular, string senha, string cpf, string numconta, DateOnly dataNascimento)
+        public async Task<TipoRetorno> AdcionarConta(CriarContaCommand command)
         {
             try
             {
-                var novaConta = _context.ContaCorrente.Add(new ContaCorrente { Titular = titular, Senha = senha, Cpf = cpf, DataCriacao = DateTime.Now, Dtnascimento = dataNascimento, NumConta = numconta, Ativo = true, Saldo = 0});
+                var novaConta = _context.ContaCorrente.Add(new ContaCorrente 
+                { 
+                    Titular = command.titular, 
+                    Senha = command.senha, Cpf = command.cpf, 
+                    DataCriacao = DateTime.Now, 
+                    Dtnascimento = command.dataNascimento, 
+                    NumConta = command.numConta, 
+                    Ativo = command.Ativa, 
+                    Saldo = 0
+                });
                 await _context.SaveChangesAsync();
                 
                 return TipoRetorno.Sucesso;

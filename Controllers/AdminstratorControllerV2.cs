@@ -10,6 +10,7 @@
  -  
 */
 //talvez seja bom melhorar o sistema de decisão do erro.
+using api_para_banco.Aplication.Commands;
 using api_para_banco.Aplication.Services;
 using api_para_banco.Domain.Enums;
 using api_para_banco.Infrastructure.Data.DTO;
@@ -63,9 +64,9 @@ namespace api_para_banco.Controllers
         }
         [ApiVersion(2.0)]
         [HttpPost("/V2/Criar_Conta")]
-        public async Task<IActionResult> CriarConta(string titular, string senha, string cpf, string numConta , DateOnly dataNascimento) 
+        public async Task<IActionResult> CriarConta(CriarContaCommand command) 
         {
-            TipoRetorno resultado = await _admUtilidade.AdcionarConta(titular, senha, cpf, numConta, dataNascimento);
+            TipoRetorno resultado = await _admUtilidade.AdcionarConta(command);
             if (resultado == TipoRetorno.Sucesso)
                 return Ok(resultado);
 

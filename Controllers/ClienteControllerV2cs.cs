@@ -59,12 +59,12 @@ namespace api_para_banco.Controllers
 
         [ApiVersion(2.0)]
         [HttpPut("/V2/Colocar_Na_Caixinha")]
-        public async Task<IActionResult> ColocarNaCaixinha(string cpf, decimal saldo)
+        public async Task<IActionResult> ColocarNaCaixinha(TranferenciaCaixinhaCommand command)
         {
-            TipoRetorno resultado = await _utilidade.ColocarNaCaixinha(cpf, saldo);
+            TipoRetorno resultado = await _utilidade.ColocarNaCaixinha(command);
      
             if(resultado == TipoRetorno.Sucesso)
-                return Ok($"tranferido {saldo} para a caixinha");
+                return Ok($"tranferido {command.valor} para a caixinha");
             
             return TratarErros(resultado, "Caixinha ou conta não encontrada", "Saldo insuficiente", "Erro interno do servidor");
         }
@@ -72,11 +72,11 @@ namespace api_para_banco.Controllers
         
         [ApiVersion(2.0)]
         [HttpPut("/V2/Retirar_Da_Caixinha")]
-        public async Task<IActionResult> RetirarDaCaixinha(string cpf, decimal saldo)
+        public async Task<IActionResult> RetirarDaCaixinha(TranferenciaCaixinhaCommand command)
         {
-            TipoRetorno resultado = await _utilidade.RetirarDaCaixinha(cpf, saldo);
+            TipoRetorno resultado = await _utilidade.RetirarDaCaixinha(command);
             if(resultado == TipoRetorno.Sucesso)
-                return Ok($"Retirado {saldo} da caixinha");
+                return Ok($"Retirado {command.valor} da caixinha");
     
             return TratarErros(resultado, "Caixinha ou conta não encontrada", "Saldo insuficiente", "Erro interno do servidor");
 

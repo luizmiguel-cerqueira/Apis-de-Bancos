@@ -73,27 +73,27 @@ namespace api_para_banco.Aplication.Services
                 return TipoRetorno.ErroInterno;
             }
         }
-        public async Task<TipoRetorno> ColocarNaCaixinha(string cpf, decimal saldo)
+        public async Task<TipoRetorno> ColocarNaCaixinha(TranferenciaCaixinhaCommand command )
         {
             try
             {
                 using var transaction = await _context.Database.BeginTransactionAsync();
 
-                var ContaTitular = _context.ContaCorrente.Where(x => x.Cpf == cpf && x.Saldo >= saldo)
-                    .ExecuteUpdate(s => s.SetProperty(c => c.Saldo, c => c.Saldo - saldo));
+                var ContaTitular = _context.ContaCorrente.Where(x => x.Cpf == command.cpf && x.Saldo >= command.valor)
+                    .ExecuteUpdate(s => s.SetProperty(c => c.Saldo, c => c.Saldo - command.valor));
                 if (ContaTitular == 0)
                 {   
-                    var ContaTitularExistente = _context.ContaCorrente.Any(x => x.Cpf == cpf);
+                    var ContaTitularExistente = _context.ContaCorrente.Any(x => x.Cpf == command.cpf);
                     transaction.Rollback();
                     if(!ContaTitularExistente)
                         return TipoRetorno.NaoEncontrado;
                     return TipoRetorno.Conflito;
                 }
-                var ContaPoupanca = _context.ContaPoupanca.Where(y => y.Cpf == cpf)
-                    .ExecuteUpdate(s => s.SetProperty(c => c.Saldo, c => c.Saldo + saldo));
+                var ContaPoupanca = _context.ContaPoupanca.Where(y => y.Cpf == command.cpf)
+                    .ExecuteUpdate(s => s.SetProperty(c => c.Saldo, c => c.Saldo + command.valor));
                 if (ContaPoupanca == 0)
                 {
-                    var ContaPoupancaExistente = _context.ContaPoupanca.Any(x => x.Cpf == cpf);
+                    var ContaPoupancaExistente = _context.ContaPoupanca.Any(x => x.Cpf == command.cpf);
                     transaction.Rollback();
                     if (!ContaPoupancaExistente)
                         return TipoRetorno.NaoEncontrado;
@@ -109,27 +109,27 @@ namespace api_para_banco.Aplication.Services
                 return TipoRetorno.ErroInterno;
             }
         }
-        public async Task<TipoRetorno> RetirarDaCaixinha(string cpf, decimal saldo)
+        public async Task<TipoRetorno> RetirarDaCaixinha(TranferenciaCaixinhaCommand command)
         {
             try
             { 
                 using var transaction = await _context.Database.BeginTransactionAsync();
-                var ContaPoupanca = _context.ContaPoupanca.Where(x => x.Cpf == cpf && x.Saldo >= saldo)
-                    .ExecuteUpdate(s => s.SetProperty(c => c.Saldo, c => c.Saldo - saldo));
+                var ContaPoupanca = _context.ContaPoupanca.Where(x => x.Cpf == command.cpf && x.Saldo >= command.valor)
+                    .ExecuteUpdate(s => s.SetProperty(c => c.Saldo, c => c.Saldo - command.valor));
                 if (ContaPoupanca == 0)
                 {   
-                    var ContaPoupancaExistente = _context.ContaPoupanca.Any(x => x.Cpf == cpf);
+                    var ContaPoupancaExistente = _context.ContaPoupanca.Any(x => x.Cpf == command.cpf);
                     transaction.Rollback();
                     
                     if (!ContaPoupancaExistente)
                         return TipoRetorno.NaoEncontrado;
                     return TipoRetorno.Conflito;
                 }
-                var ContaCorrente = _context.ContaCorrente.Where(y => y.Cpf == cpf)
-                    .ExecuteUpdate(s => s.SetProperty(c => c.Saldo, c => c.Saldo + saldo));
+                var ContaCorrente = _context.ContaCorrente.Where(y => y.Cpf == command.cpf)
+                    .ExecuteUpdate(s => s.SetProperty(c => c.Saldo, c => c.Saldo + command.valor));
                 if (ContaCorrente == 0)
                 {
-                    var ContaTitularExistente = _context.ContaCorrente.Any(x => x.Cpf == cpf);
+                    var ContaTitularExistente = _context.ContaCorrente.Any(x => x.Cpf == command.cpf);
                     transaction.Rollback();
 
                     if (!ContaTitularExistente)
