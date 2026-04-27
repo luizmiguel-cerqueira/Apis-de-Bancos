@@ -3,13 +3,13 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using api_para_banco.model;
+using api_para_banco.model.EF;
 
 #nullable disable
 
 namespace api_para_banco.Migrations
 {
-    [DbContext(typeof(EntityFrameWorkModel))]
+    [DbContext(typeof(SistemaFinanceiroContext))]
     partial class BloggingContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)
@@ -21,7 +21,7 @@ namespace api_para_banco.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("api_para_banco.model.EntityFrameWorkModel+Users", b =>
+            modelBuilder.Entity("api_para_banco.model.SistemaFinanceiroContext+Users", b =>
                 {
                     b.Property<int>("userID")
                         .ValueGeneratedOnAdd()

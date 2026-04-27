@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace api_para_banco.model
+namespace api_para_banco.model.EF
 {
     public class SqlServerModel
     {
