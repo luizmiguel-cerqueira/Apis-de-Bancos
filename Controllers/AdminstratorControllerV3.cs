@@ -13,49 +13,29 @@
 using api_para_banco.Domain.Enums;
 using api_para_banco.model;
 using api_para_banco.model.DTO;
-using api_para_banco.Services;
+using api_para_banco.Services.Implamentations;
+using api_para_banco.Services.Interfaces;
 using Asp.Versioning;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace api_para_banco.Controllers
 {
-    public class Filtro2 
+    public class Filtro 
     {
-       public Tipo2? tipo { get; set; }
+       public Tipo? tipo { get; set; }
     }
-    public enum Tipo2 
+    public enum Tipo 
     {
         valorMinimo,
         valorMaximo,
         cpf
     }
-    public class AdminstratorControllerV3(IAccountManagerServices accountManagerServices) : Controller
+    [ApiVersion(3.0)]
+    [Authorize(Roles = "admin")]
+    public class AdminstratorControllerV3(IAccountManagerServices accountManagerServices, ApiHelpper apiHelper) : ControllerBase
     {
-
-        //[ApiVersion(3.0)]
-        //[HttpGet("/V3/Pessoas_Com_Caixinha")]
-        //public async Task<IActionResult> BuscaPessoasComCaixinhas([FromQuery] Filtro2 tipofiltro, string? cpf)
-        //{
-        //    ResultadoOperacaoDTO resultado = await _admUtilidade.PessoasComCaixinha(tipofiltro.tipo.ToString(), cpf);
-        //    if (resultado.statusCode == TipoRetorno.Sucesso)
-        //        return Ok(resultado);
-
-        //    return TratarErros(resultado.statusCode);
-
-        //}
-        //[ApiVersion(3.0)]
-        //[HttpGet("/V3/Alterar_Saldo")]
-        //public async Task<IActionResult> AlterarSaldo (string titular, decimal valor) 
-        //{
-        //    TipoRetorno resultado = await _admUtilidade.AlterarSaldo(titular, valor);
-
-        //    if(resultado == TipoRetorno.Sucesso)
-        //        return Ok(resultado);
-
-        //    return TratarErros(resultado);
-        //}
         
-        [ApiVersion(3.0)]
         [HttpPost("/V3/Criar_Conta")]
         public async Task<IActionResult> CriarConta(CreateAccountDTO request)
         {
@@ -63,10 +43,11 @@ namespace api_para_banco.Controllers
             if (resultado == TipoRetorno.Sucesso)
                 return Ok(resultado);
 
-            return TratarErros(resultado);
+            return apiHelper.TratarErros(this, resultado, "Conta não encontrada", "Conflito", "Erro interno do servidor");
 
         }
-        [ApiVersion(3.0)]
+        
+
         [HttpPost("/V3/Excluir_Conta")]
         public async Task<IActionResult> ExcluirConta(string titular)
         {
@@ -74,17 +55,7 @@ namespace api_para_banco.Controllers
             if (resultado == TipoRetorno.Sucesso)
                 return Ok(resultado);
 
-            return TratarErros(resultado);
-        }
-        public IActionResult TratarErros(TipoRetorno resultado)
-        {
-            return resultado switch
-            {
-                TipoRetorno.NaoEncontrado => NotFound("Conta não encontrada."),
-                TipoRetorno.Conflito => Conflict("Operação inválida."),
-                TipoRetorno.ErroInterno => StatusCode(500, "Erro interno."),
-                _ => StatusCode(500, "Erro desconhecido.")
-            };
+            return apiHelper.TratarErros(this, resultado, "Conta não encontrada", "Conflito", "Erro interno do servidor");
         }
     }
 }

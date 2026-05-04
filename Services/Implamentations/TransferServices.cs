@@ -1,10 +1,11 @@
 ﻿using api_para_banco.Domain.Enums;
 using api_para_banco.model.DTO;
 using api_para_banco.model.EF;
+using api_para_banco.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Controller;
 
-namespace api_para_banco.Services
+namespace api_para_banco.Services.Implamentations
 {
     public class TransferServices(SistemaFinanceiroContext context, IAccountServices accountServices) : ITransferServices
     {

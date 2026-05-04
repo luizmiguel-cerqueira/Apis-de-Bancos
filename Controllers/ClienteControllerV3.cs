@@ -11,19 +11,20 @@
 using api_para_banco.Domain.Enums;
 using api_para_banco.model;
 using api_para_banco.model.DTO;
-using api_para_banco.Services;
+using api_para_banco.Services.Interfaces;
 using Asp.Versioning;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Identity.Client;
 using System.Drawing;
 
 namespace api_para_banco.Controllers
 {
-    public class ClienteControllerV3(ITransferServices transferServices, IAccountServices accountServices, ISafesServices safesServices) : Controller
+    [ApiVersion("3.0")]
+    [Authorize(Roles = "cliente")]
+    public class ClienteControllerV3(IAccountServices accountServices) : ControllerBase
     {
 
-
-        [ApiVersion(3.0)]
         [HttpGet("/V3/Ver_saldo")]
         public async Task<IActionResult> Versaldo(string titular)
         {
@@ -34,100 +35,6 @@ namespace api_para_banco.Controllers
 
             return Ok(resultado.Item2);     
         }
-
-
-        [ApiVersion(3.0)]
-        [HttpPut("/V3/Tranferencia_Bancaria")]
-        public async Task<IActionResult> TranferenciaBancaria(TransferDTO request)
-        {
-            var resultado = await transferServices.TransferAsnyc(new TransferDTO { FromAccount = "111111111111111", ToAccount= "21212121211" , quantity = 1 });
-
-            if (resultado == TipoRetorno.Sucesso)
-                return Ok($"Foi tranferido, {request.quantity} da conta do titular {request.FromAccount} para {request.ToAccount}");
-
-            return TratarErros(resultado, "Conta Beneficiaria ou titular não encontrado", "Saldo insuficiente", "Erro interno do servidor");
-        }
-
-
-        [ApiVersion(3.0)]
-        [HttpPut("/V3/Colocar_Na_Caixinha")]
-        public async Task<IActionResult> ColocarNaCaixinha(TransferDTO request)
-        {
-            var resultado = await safesServices.DepositInSavingsAsync(request);
-
-            if (resultado == TipoRetorno.Sucesso)
-                return Ok($"tranferido {request.quantity} para a caixinha");
-
-            return TratarErros(resultado, "Caixinha ou conta não encontrada", "Saldo insuficiente", "Erro interno do servidor");
-        }
-
-
-        [ApiVersion(3.0)]
-        [HttpPut("/V3/Retirar_Da_Caixinha")]
-        public async Task<IActionResult> RetirarDaCaixinha(TransferDTO request)
-        {
-            var resultado = await safesServices.WithdrawFromSavingsAsync(request);
-            if (resultado == TipoRetorno.Sucesso)
-                return Ok($"Retirado {request.quantity} da caixinha");
-
-
-            return TratarErros(resultado, "Caixinha ou conta não encontrada", "Saldo insuficiente", "Erro interno do servidor");
-
-        }
-        [ApiVersion(3.0)]
-        [HttpGet("/V3/Histórico_por_IdTranferencia")]
-        public async Task<IActionResult> HistoricoPorIdTranferencia(Guid idTranferencia)
-        {
-            var resultado = await transferServices.GetTransferByIdAsync(idTranferencia);
-            if(resultado.TipoRetorno == TipoRetorno.Sucesso)
-            {
-                return Ok(resultado.Transfers);
-            }
-            return TratarErros(resultado.TipoRetorno, "Transferência não encontrada", "Conflito", "Erro interno do servidor");
-        }
-        [ApiVersion(3.0)]
-        [HttpGet("/V3/Histórico_por_NumeroConta")]
-        public async Task<IActionResult> HistoricoPorNumeroConta(string numeroConta)
-        {
-            var resultado = await transferServices.GetTransfersByAccountAsync(numeroConta);
-            if (resultado.TipoRetorno == TipoRetorno.Sucesso)
-            {
-                return Ok(resultado.Transfers);
-            }
-            return TratarErros(resultado.TipoRetorno, "Transferência não encontrada", "Conflito", "Erro interno do servidor");
-        }
-        [ApiVersion(3.0)]
-        [HttpGet("/V3/Todos_os_cofres")]
-        public async Task<IActionResult> TodosOsCofres(int id)
-        {
-            var resultado = await safesServices.GetAllSafesAsync(id);
-            if (resultado.tipoRetorno == TipoRetorno.Sucesso)
-            {
-                return Ok(resultado.safes);
-            }
-            return TratarErros(resultado.tipoRetorno, "Transferência não encontrada", "Conflito", "Erro interno do servidor");
-        }
-        [ApiVersion(3.0)]
-        [HttpGet("/V3/Cofres_por_nome")]
-        public async Task<IActionResult> CofresPorNome(string nome)
-        {
-            var resultado = await safesServices.GetExpecificSafeAsync(nome);
-            if (resultado.tipoRetorno == TipoRetorno.Sucesso)
-            {
-                return Ok(resultado.safes);
-            }
-            return TratarErros(resultado.tipoRetorno, "Transferência não encontrada", "Conflito", "Erro interno do servidor");
-        }
-
-        public IActionResult TratarErros(TipoRetorno resultado, string ErrorNotFound, string ErrorConflict, string Error500)
-        {
-            return resultado switch
-            {
-                TipoRetorno.NaoEncontrado => NotFound(ErrorNotFound),
-                TipoRetorno.Conflito => Conflict(ErrorConflict),
-                TipoRetorno.ErroInterno => StatusCode(500, Error500),
-                _ => StatusCode(500, "Erro desconhecido.")
-            };
-        }
+      
     }
 }
