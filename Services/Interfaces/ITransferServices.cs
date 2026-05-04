@@ -1,7 +1,7 @@
 ﻿using api_para_banco.Domain.Enums;
 using api_para_banco.model.DTO;
 
-namespace api_para_banco.Services
+namespace api_para_banco.Services.Interfaces
 {
     public interface ITransferServices
     {

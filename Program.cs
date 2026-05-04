@@ -1,17 +1,18 @@
 using api_para_banco.Controllers;
+using api_para_banco.model.EF;
+using api_para_banco.Services.Implamentations;
+using api_para_banco.Services.Interfaces;
 using Asp.Versioning;
+using Microsoft.AspNetCore;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
-using System.Text.Json.Serialization;
-using Microsoft.AspNetCore.Mvc;
-using Polly;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using Polly;
 using System.Text;
-using api_para_banco.Services;
-using api_para_banco.model.EF;
+using System.Text.Json.Serialization;
 
-var tipo = new Filtro();
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -44,7 +45,8 @@ builder.Services.AddScoped<ITransferServices, TransferServices>();
 builder.Services.AddScoped<IAccountManagerServices, AccountManagerServices>();
 builder.Services.AddScoped<SistemaFinanceiroContext>();
 builder.Services.AddScoped<ISafesServices, SafesServices>();
-builder.Services.AddDbContext<SistemaFinanceiroContext>();
+builder.Services.AddScoped<IAuthorizationServices, AuthorizationServices>();
+builder.Services.AddScoped<ApiHelpper>();
 //
 
 //fazer bind no obj SqlServerModel;

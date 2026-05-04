@@ -2,10 +2,11 @@
 using api_para_banco.Domain.Enums;
 using api_para_banco.model.DTO;
 using api_para_banco.model.EF;
+using api_para_banco.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Polly;
 
-namespace api_para_banco.Services
+namespace api_para_banco.Services.Implamentations
 {
     public class AccountServices(SistemaFinanceiroContext context) : IAccountServices
     {

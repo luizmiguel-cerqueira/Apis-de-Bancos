@@ -2,9 +2,10 @@
 using api_para_banco.model;
 using api_para_banco.model.DTO;
 using api_para_banco.model.EF;
+using api_para_banco.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
-namespace api_para_banco.Services
+namespace api_para_banco.Services.Implamentations
 {
     public class AccountManagerServices(SistemaFinanceiroContext context, IAccountServices accountServices) : IAccountManagerServices
     {
